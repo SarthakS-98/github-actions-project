@@ -1,0 +1,39 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  ci-cd-workflow:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Build Step
+        run: |
+          echo "Building the project..."
+          mkdir -p dist
+          cp index.html dist/
+          cp styles.css dist/
+          echo "Build complete. Files copied to dist/ folder."
+
+      - name: Test Step
+        run: |
+          echo "Running tests..."
+          if [ -f dist/index.html ] && [ -f dist/styles.css ]; then
+            echo "Tests Passed: Required files exist in dist/."
+          else
+            echo "Tests Failed: Missing files in dist/."
+            exit 1
+          fi
+
+      - name: Deploy Step
+        run: |
+          echo "Deploying to dist directory..."
+          ls -R dist/
+          echo "Deployment successful."
